@@ -1,0 +1,20 @@
+# Neovim / Vim Swap Files and State
+[._]*.s[a-v][a-z]
+[._]*.sw[a-p]
+[._]s[a-v][a-z]
+[._]ss[a-v][a-z]
+*.un~
+Session.vim
+.netrwhist
+
+# Host Operating System
+*.tmp
+*.bak
+*~
+.DS_Store
+
+# Private Keys and Secrets (Security)
+*.pem
+*.key
+id_rsa*
+*.env
