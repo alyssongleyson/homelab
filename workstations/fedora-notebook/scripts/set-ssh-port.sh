@@ -13,22 +13,29 @@ change_port() {
 	echo "Current Port: $port"
 	read -p "Enter the new port: " newport
 
+	if [[ -z "$newport" || ! "$newport" =~ ^[0-9]+$ ]]; then
+		echo "Error: Invalid port number."
+		return 1
+	fi
+
 	sed -i "s/^#\?Port $port/Port $newport/" /etc/ssh/sshd_config
 
 	mkdir -p /etc/systemd/system/sshd.socket.d/
 
 	echo -e "[Socket]\nListenStream=\nListenStream=$newport" > /etc/systemd/system/sshd.socket.d/override.conf
 
-	semanage port -a -t ssh_port_t -p tcp $newport
-	
-	firewall-cmd --zone=public --add-port=$newport/tcp --permanent
-	firewall-cmd --zone=public --remove-service=ssh --permanent
+	semanage port -a -t ssh_port_t -p tcp "$newport" 2>/dev/null || \
+	semanage port -m -t ssh_port_t -p tcp "$newport"
+
+	firewall-cmd --zone=public --add-port="${newpor}t/tcp" --permanent
+	if [ "$port" != "$newport" ]; then
+		firewall-cmd --zone=public --remove-port="${port}/tcp" --permanent 2>/dev/null
+	fi
 	firewall-cmd --reload
 	
 	systemctl daemon-reload
-	systemctl restart sshd.socket sshd
+	systemctl restart sshd.socket
 	systemctl enable sshd.socket
-	systemctl enable sshd.service
 }
 
 while true; do
