@@ -27,15 +27,15 @@ change_port() {
 	semanage port -a -t ssh_port_t -p tcp "$newport" 2>/dev/null || \
 	semanage port -m -t ssh_port_t -p tcp "$newport"
 
-	firewall-cmd --zone=public --add-port="${newpor}t/tcp" --permanent
-	if [ "$port" != "$newport" ]; then
+	firewall-cmd --zone=public --add-port="${newport}/tcp" --permanent >/dev/null
+	if [ -n "$port" ] && [ "$port" != "$newport" ]; then
 		firewall-cmd --zone=public --remove-port="${port}/tcp" --permanent 2>/dev/null
 	fi
-	firewall-cmd --reload
+	firewall-cmd --reload >/dev/null
 	
 	systemctl daemon-reload
-	systemctl restart sshd.socket
 	systemctl enable sshd.socket
+	systemctl restart sshd.socket
 }
 
 while true; do
@@ -69,4 +69,3 @@ while true; do
 	echo "================================"
 	read -p "Press ENTER to continue..."
 done
-
