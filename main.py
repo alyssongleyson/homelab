@@ -33,7 +33,9 @@ def execute_script(script_path, target_os):
 
     print(f"\nRunning: {script_path}\n" + "-"*40)
     try:
-        if current_os == 'windows':
+        if script_path.endswith('.py'):
+            subprocess.run([sys.executable, full_path], check=True)
+        elif current_os == 'windows':
             subprocess.run(["powershell.exe", "-ExecutionPolicy", "Bypass", "-File", full_path], check=True)
         else:
             subprocess.run(["bash", full_path], check=True)
@@ -51,8 +53,9 @@ def main():
         print("==========================================")
         print(f"   HOME LAB MANAGER CLI (OS: {current_os.upper()})")
         print("==========================================")
-        print("1. [Any] Check network status")
-        print("2. [Linux] Change SSH Port")
+        print("1. [Any]    Check network status")
+        print("2. [Linux]  Change SSH Port")
+        print("3. [Linux]  Hardware Telematry")
         print("0. Exit")
         print("==========================================")
 
@@ -64,6 +67,8 @@ def main():
             input("\nPress Enter to continue...")
         elif choice == '2':
             execute_script("workstations/fedora-notebook/scripts/set-ssh-port.sh", target_os="linux")
+        elif choice == '3':
+            execute_script("get_hardware_linux.py", target_os="linux")
         elif choice == '0':
             print("\nLeaving...")
             sys.exit(0)
