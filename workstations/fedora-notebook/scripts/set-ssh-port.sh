@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if [[ $EUID -ne 0 ]]; then
+    echo "Error: This script must be run as root (use sudo)."
+    exit 1
+fi
+
 show_port() {
 	grep -E "^#?Port " /etc/ssh/sshd_config | awk '{print $2}'
 }
@@ -46,7 +51,7 @@ while true; do
 	echo "================================"
 	echo "(1) Show current SSH port."
 	echo "(2) Change SSH port."
-	echo "(3) Exit."
+	echo "(0) Exit."
 	echo "================================"
 
 	read -p "Enter the number: " option
@@ -58,7 +63,7 @@ while true; do
 		2)
 			change_port
 			;;
-		3)
+		0)
 			exit 0
 			;;
 		*)
